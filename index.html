@@ -101,9 +101,9 @@
     async function predict() {
   const prediction = await model.predict(webcam.canvas);
 
-  // Tìm lớp có xác suất cao nhất
   let highestProb = 0;
   let bestLabel = "";
+
   for (let i = 0; i < prediction.length; i++) {
     if (prediction[i].probability > highestProb) {
       highestProb = prediction[i].probability;
@@ -111,11 +111,11 @@
     }
   }
 
-  // Chỉ hiển thị tên lớp có xác suất cao nhất (nếu xác suất đủ cao)
+  // Hiện kết quả nếu tự tin > 80%
   if (highestProb > 0.8) {
     labelContainer.innerHTML = `<div><strong>${bestLabel}</strong></div>`;
   } else {
-    labelContainer.innerHTML = `<div>Đang nhận diện...</div>`;
+    labelContainer.innerHTML = `<div style="color: red;">Hình ảnh không có trong dữ liệu của chúng tôi.</div>`;
   }
 }
 
