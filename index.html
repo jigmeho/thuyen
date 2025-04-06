@@ -99,13 +99,26 @@
     }
 
     async function predict() {
-      const prediction = await model.predict(webcam.canvas);
-      for (let i = 0; i < maxPredictions; i++) {
-        const classPrediction =
-          prediction[i].className + ": " + (prediction[i].probability * 100).toFixed(1) + "%";
-        labelContainer.childNodes[i].innerHTML = classPrediction;
-      }
+  const prediction = await model.predict(webcam.canvas);
+
+  // Tìm lớp có xác suất cao nhất
+  let highestProb = 0;
+  let bestLabel = "";
+  for (let i = 0; i < prediction.length; i++) {
+    if (prediction[i].probability > highestProb) {
+      highestProb = prediction[i].probability;
+      bestLabel = prediction[i].className;
     }
+  }
+
+  // Chỉ hiển thị tên lớp có xác suất cao nhất (nếu xác suất đủ cao)
+  if (highestProb > 0.8) {
+    labelContainer.innerHTML = `<div><strong>${bestLabel}</strong></div>`;
+  } else {
+    labelContainer.innerHTML = `<div>Đang nhận diện...</div>`;
+  }
+}
+
   </script>
 </body>
 </html>
