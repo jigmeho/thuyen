@@ -97,8 +97,9 @@
       await predict();
       window.requestAnimationFrame(loop);
     }
+let lastSpoken = "";  // Để tránh lặp lại liên tục
 
-    async function predict() {
+async function predict() {
   const prediction = await model.predict(webcam.canvas);
 
   let highestProb = 0;
@@ -111,13 +112,29 @@
     }
   }
 
-  // Hiện kết quả nếu tự tin > 80%
   if (highestProb > 0.8) {
     labelContainer.innerHTML = `<div><strong>${bestLabel}</strong></div>`;
+
+    // Nếu label khác lần trước → nói lại
+    if (bestLabel !== lastSpoken) {
+      speak(bestLabel);
+      lastSpoken = bestLabel;
+    }
+
   } else {
     labelContainer.innerHTML = `<div style="color: red;">Hình ảnh không có trong dữ liệu của chúng tôi.</div>`;
+    lastSpoken = "";  // Reset khi không có gì rõ ràng
   }
 }
+function speak(text) {
+  const msg = new SpeechSynthesisUtterance();
+  msg.text = text;
+  msg.lang = 'vi-VN';  // Đọc giọng tiếng Việt
+  msg.pitch = 1;
+  msg.rate = 1;
+  window.speechSynthesis.speak(msg);
+}
+  
 
   </script>
 </body>
